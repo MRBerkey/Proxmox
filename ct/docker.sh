@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 source <(curl -s https://raw.githubusercontent.com/tteck/Proxmox/main/misc/build.func)
-# Copyright (c) 2021-2024 tteck
-# Author: tteck (tteckster)
-# License: MIT
-# https://github.com/tteck/Proxmox/raw/main/LICENSE
+
 
 function header_info {
 clear
@@ -30,7 +27,7 @@ catch_errors
 
 function default_settings() {
   CT_TYPE="1"
-  PW=""
+  PW="changeme"
   CT_ID=$NEXTID
   HN=$NSAPP
   DISK_SIZE="$var_disk"
@@ -47,7 +44,7 @@ function default_settings() {
   NS=""
   MAC=""
   VLAN=""
-  SSH="no"
+  SSH="yes"
   VERB="no"
   echo_default
 }
@@ -56,6 +53,8 @@ function update_script() {
 header_info
 if [[ ! -d /var ]]; then msg_error "No ${APP} Installation Found!"; exit; fi
 msg_info "Updating ${APP} LXC"
+echo 'Acquire::http::Proxy "http://proxy-us.intel.com:911";' > /etc/apt/apt.conf.d/01proxy
+echo 'Acquire::https::Proxy "http://proxy-us.intel.com";' > /etc/apt/apt.conf.d/01proxy
 apt-get update &>/dev/null
 apt-get -y upgrade &>/dev/null
 msg_ok "Updated ${APP} LXC"
